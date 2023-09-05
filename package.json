@@ -14,6 +14,6 @@
     "vite": "^4.4.5"
   },
   "dependencies": {
-    "tinymce": "^6.7.0"
+    "lexical": "^0.12.0"
   }
 }
