@@ -12,8 +12,5 @@
     "sass": "^1.66.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
-  },
-  "dependencies": {
-    "lexical": "^0.12.0"
   }
 }
