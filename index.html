@@ -11,9 +11,11 @@
   <body>
     <div id="app"></div>
     <form method="post">
-      <input type="text" placeholder="title!"></input>
+      <input type="text" placeholder="title!" id="title"></input>
+      <div id="editorjs"></div>
       <button type="submit" id="submitPost">Submit</button>
     </form>
+    <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
