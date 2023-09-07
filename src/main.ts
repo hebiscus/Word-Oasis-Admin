@@ -170,11 +170,33 @@ async function showUpdatePost(e: MouseEvent) {
   }
 }
 
-// updatePost();
+async function deletePost(e: MouseEvent) {
+  e.preventDefault();
+  const postInput = document.getElementById("id-delete") as HTMLInputElement;
+  if (!postInput.value) {
+    console.log("temporary: heyyy, no ID?");
+    return
+  }
+  const postId = postInput.value;
+
+  try {
+    await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}/delete`, {
+      method: "DELETE",
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+        },
+    })
+  } catch(err) {
+    console.log(err);
+  }
+}
 
 const submitButton = document.getElementById("submitPost");
 submitButton?.addEventListener("click", submitPostData);
 
 const updateButton = document.getElementById("update-button");
-updateButton?.addEventListener("click", showUpdatePost)
+updateButton?.addEventListener("click", showUpdatePost);
 
+const deleteButton = document.getElementById("delete-button");
+deleteButton?.addEventListener("click", deletePost)
