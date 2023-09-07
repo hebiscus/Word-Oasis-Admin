@@ -2,6 +2,7 @@ import { ParagraphInterface } from './interfaces';
 import './styles/style.scss';
 import EditorJS from '@editorjs/editorjs';
 
+
 // document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 //   <div>
 //     I'm innocent I swear!
@@ -25,9 +26,9 @@ const loginRequest = (async(e: MouseEvent, name: string, password: string) => {
     } catch(err) {
       console.log(err);
     }
-})
+});
 
-function toogleUserBox() {
+function showUserBox() {
     const userBox = document.getElementById("user-box");
     const userToken = localStorage.getItem("userToken");
     
@@ -50,11 +51,14 @@ function toogleUserBox() {
       loggedInBox.innerText = "You're logged in!";
       userBox?.append(loggedInBox);
     }
-}
+};
 
-toogleUserBox();
+showUserBox();
 
-const editor = new EditorJS("editorjs");
+const editor = new EditorJS({
+  placeholder: "Start writing here...",
+  holder: "editorjs",
+});
 
 const submitPostData = (async(e: MouseEvent) => {
   e.preventDefault();
@@ -98,8 +102,79 @@ const submitPostData = (async(e: MouseEvent) => {
   } catch(err) {
     console.log(err)
   }
+});
+
+const updatePost = (async(e: MouseEvent, postId: string, title: string, content: string, status: boolean) => {
+  e.preventDefault();
+
+  try {
+    const updatingRes = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}/update`, {
+      method: "PUT",
+      body: JSON.stringify({
+        title: title,
+        content: content,
+        status: "published",
+        creationDate: new Date(),
+      }),
+      headers: { 
+      'Content-Type': 'application/json', 
+      'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+      },
+    })
+  } catch(err) {
+    console.log(err);
+  }
 })
+
+function createUpdateForm(postId: string, title: string, content: string) {
+  const updateBox = document.getElementById("update-box")
+  const updateForm = document.createElement("form");
+  
+  const titleInput = document.createElement("input");
+  titleInput.setAttribute("type", "text");
+  titleInput.value = title;
+
+  const contentInput = document.createElement("textarea")
+  contentInput.value = content;
+
+  const statusLabel = document.createElement("label")
+  statusLabel.setAttribute("for", "statusInput");
+  statusLabel.innerText = "published?"
+  const updateStatus = document.createElement("input");
+  updateStatus.setAttribute("type", "checkbox");
+  updateStatus.setAttribute("id", "statusInput");
+
+  const updateSubmit = document.createElement("button")
+  updateSubmit.setAttribute("type", "submit");
+  updateSubmit.addEventListener("click", (e: MouseEvent) => updatePost(e, postId, titleInput.value, contentInput.value, updateStatus.checked))
+  updateSubmit.innerText = "Update Post"
+
+  updateForm.append(titleInput, contentInput, statusLabel, updateStatus, updateSubmit);
+  updateBox?.append(updateForm)
+}
+
+async function showUpdatePost(e: MouseEvent) {
+  e.preventDefault();
+
+  const idInput = document.getElementById("id-input") as HTMLInputElement;
+
+  if (!idInput.value) {
+    console.log("temporary: huh, what post?")
+  } else {
+    const postId = idInput.value;
+    const foundPostResponse = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}`);
+    const foundPost = await foundPostResponse.json();
+    console.log(foundPost);
+
+    createUpdateForm(postId, foundPost.title, foundPost.content);
+  }
+}
+
+// updatePost();
 
 const submitButton = document.getElementById("submitPost");
 submitButton?.addEventListener("click", submitPostData);
+
+const updateButton = document.getElementById("update-button");
+updateButton?.addEventListener("click", showUpdatePost)
 

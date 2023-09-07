@@ -9,14 +9,25 @@
     <title>Word Oasis Admin</title>
   </head>
   <body>
-    <div id="user-box">
-      
-    </div>
+    <div id="user-box"></div>
+    <h1>Make a post:</h1>
     <form method="post">
-      <input type="text" placeholder="title!" id="title"></input>
+      <input type="text" placeholder="Title" id="title"></input>
       <div id="editorjs"></div>
       <button type="submit" id="submitPost">Submit</button>
     </form>
+    <h2>Update a post:</h2>
+    <div id="update-box">
+      <form>
+        <input type="text" placeholder="ID of a post to update" id="id-input"/>
+        <button type="submit" id="update-button">Find post data</button>
+      </form>
+    </div>
+    <!-- <form>
+      <input id="postID" />
+      <textarea placeholder="update here"></textarea>
+      <button type="submit" id="updatePost">Update blog post</button>
+    </form> -->
     <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
     <script type="module" src="/src/main.ts"></script>
   </body>
