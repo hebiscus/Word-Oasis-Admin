@@ -78,22 +78,25 @@ const submitPostData = (async(e: MouseEvent) => {
   const paragraphs = data.blocks.map((paragraph: ParagraphInterface) => {
       return paragraph.data.text
   })
-  const finalContentData = JSON.stringify(paragraphs);
   const title = document.getElementById("title") as HTMLInputElement | null;
-  if (!title) return
+  const fileInput = document.getElementById("blogpostImage") as HTMLInputElement | null;
+  if (!title || !fileInput) return
+  const currentDate = new Date().toISOString();
 
-  console.log(title.value, paragraphs)
+  const formData = new FormData();
+  formData.append("title", title.value);
+  formData.append("blogpostImage", fileInput.files![0]);
+  formData.append("status", "published");
+  formData.append("creationDate", currentDate);
+  paragraphs.forEach((paragraph: string) => {
+    formData.append("content[]", paragraph)
+  })
+
   try {
-    const attempt = await fetch(`https://word-oasis-api-production.up.railway.app/posts`, {
+    const attempt = await fetch(`http://localhost:3038/posts`, {
       method:'POST',
-      body: JSON.stringify({
-          title: title.value,
-          content: finalContentData,
-          status: "published",
-          creationDate: new Date(),
-      }),
+      body: formData,
       headers: { 
-        'Content-Type': 'application/json', 
         'Authorization': `Bearer ${localStorage.getItem("userToken")}`
        },
     })

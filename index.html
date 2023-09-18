@@ -11,8 +11,9 @@
   <body>
     <div id="user-box"></div>
     <h1>Make a post:</h1>
-    <form method="post">
-      <input type="text" placeholder="Title" id="title"></input>
+    <form method="post" enctype="multipart/form-data">
+      <input type="text" placeholder="Title" id="title"/>
+      <input type="file" id="blogpostImage" name="blogpostImage"/>
       <div id="editorjs"></div>
       <button type="submit" id="submitPost">Submit</button>
     </form>
