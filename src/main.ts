@@ -2,13 +2,6 @@ import { ParagraphInterface } from './interfaces';
 import './styles/style.scss';
 import EditorJS from '@editorjs/editorjs';
 
-
-// document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-//   <div>
-//     I'm innocent I swear!
-//   </div>
-// `
-
 const loginRequest = (async(e: MouseEvent, name: string, password: string) => {
     e.preventDefault();
 
@@ -60,6 +53,7 @@ const editor = new EditorJS({
   holder: "editorjs",
 });
 
+
 const submitPostData = (async(e: MouseEvent) => {
   e.preventDefault();
 
@@ -107,38 +101,78 @@ const submitPostData = (async(e: MouseEvent) => {
   }
 });
 
-const updatePost = (async(e: MouseEvent, postId: string, title: string, content: string, status: boolean) => {
+const updatePost = (async(e: MouseEvent, postId: string, title: string, updateEditor, status: boolean) => {
   e.preventDefault();
 
+  console.log(updateEditor)
+
+  const getContendData = () => {
+    const contentData = updateEditor.save().then((outputData) => {
+      console.log('Article data: ', outputData)
+      return outputData;
+    }).catch((error) => {
+      console.log('Saving failed: ', error)
+    });
+
+    return contentData;
+  }
+  
+  const data = await getContendData();
+  const paragraphs = data.blocks.map((paragraph: ParagraphInterface) => {
+      return paragraph.data.text
+  })
+  const currentDate = new Date().toISOString();
+
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("status", "published");
+  formData.append("creationDate", currentDate);
+  paragraphs.forEach((paragraph: string) => {
+    formData.append("content[]", paragraph)
+  })
+
+  // try {
+  //   const updatingRes = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}/update`, {
+  //     method: "PUT",
+  //     body: JSON.stringify({
+  //       title: title,
+  //       content: content,
+  //       status: "published",
+  //       creationDate: new Date(),
+  //     }),
+  //     headers: { 
+  //     'Content-Type': 'application/json', 
+  //     'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+  //     },
+  //   })
+  // } catch(err) {
+  //   console.log(err);
+  // }
+
+  console.log(formData)
+
   try {
-    const updatingRes = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}/update`, {
-      method: "PUT",
-      body: JSON.stringify({
-        title: title,
-        content: content,
-        status: "published",
-        creationDate: new Date(),
-      }),
+    const attempt = await fetch(`http://localhost:3038/posts/${postId}/update`, {
+      method:'PUT',
+      body: formData,
       headers: { 
-      'Content-Type': 'application/json', 
-      'Authorization': `Bearer ${localStorage.getItem("userToken")}`
-      },
+        'Authorization': `Bearer ${localStorage.getItem("userToken")}`
+       },
     })
+    const response = await attempt.json();
+    console.log(response)
   } catch(err) {
-    console.log(err);
+    console.log(err)
   }
 })
 
-function createUpdateForm(postId: string, title: string, content: string) {
+function createUpdateForm(foundPost, updateEditor) {
   const updateBox = document.getElementById("update-box")
   const updateForm = document.createElement("form");
   
   const titleInput = document.createElement("input");
   titleInput.setAttribute("type", "text");
-  titleInput.value = title;
-
-  const contentInput = document.createElement("textarea")
-  contentInput.value = content;
+  titleInput.value = foundPost.title;
 
   const statusLabel = document.createElement("label")
   statusLabel.setAttribute("for", "statusInput");
@@ -149,10 +183,10 @@ function createUpdateForm(postId: string, title: string, content: string) {
 
   const updateSubmit = document.createElement("button")
   updateSubmit.setAttribute("type", "submit");
-  updateSubmit.addEventListener("click", (e: MouseEvent) => updatePost(e, postId, titleInput.value, contentInput.value, updateStatus.checked))
+  updateSubmit.addEventListener("click", (e: MouseEvent) => updatePost(e, foundPost._id, titleInput.value, updateEditor, updateStatus.checked))
   updateSubmit.innerText = "Update Post"
 
-  updateForm.append(titleInput, contentInput, statusLabel, updateStatus, updateSubmit);
+  updateForm.append(titleInput, statusLabel, updateStatus, updateSubmit);
   updateBox?.append(updateForm)
 }
 
@@ -166,10 +200,22 @@ async function showUpdatePost(e: MouseEvent) {
   } else {
     const postId = idInput.value;
     const foundPostResponse = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}`);
-    const foundPost = await foundPostResponse.json();
-    console.log(foundPost);
+    const foundResponse = await foundPostResponse.json();
+    console.log(foundResponse);
+    const foundPost = foundResponse.blogpost
+    console.log(foundPost.content)
 
-    createUpdateForm(postId, foundPost.title, foundPost.content);
+    const dataMap = foundPost.content.map((paragraph: string) => {
+      return {type: "paragraph", data: {"text": paragraph}}
+    })
+    console.log(dataMap)
+    
+    const updateEditor = new EditorJS({
+      holder: "updateEditor",
+      data: {"blocks" : dataMap},
+    })
+
+    createUpdateForm(foundPost, updateEditor);
   }
 }
 
