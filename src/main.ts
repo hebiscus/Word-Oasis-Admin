@@ -123,44 +123,30 @@ const updatePost = (async(e: MouseEvent, postId: string, title: string, updateEd
   })
   const currentDate = new Date().toISOString();
 
-  const formData = new FormData();
-  formData.append("title", title);
-  formData.append("status", "published");
-  formData.append("creationDate", currentDate);
+  const urlEncoded = new URLSearchParams();
+  urlEncoded.append("title", title);
+  urlEncoded.append("status", "published");
+  urlEncoded.append("creationDate", currentDate);
   paragraphs.forEach((paragraph: string) => {
-    formData.append("content[]", paragraph)
+    urlEncoded.append("content", paragraph)
   })
 
-  // try {
-  //   const updatingRes = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}/update`, {
-  //     method: "PUT",
-  //     body: JSON.stringify({
-  //       title: title,
-  //       content: content,
-  //       status: "published",
-  //       creationDate: new Date(),
-  //     }),
-  //     headers: { 
-  //     'Content-Type': 'application/json', 
-  //     'Authorization': `Bearer ${localStorage.getItem("userToken")}`
-  //     },
-  //   })
-  // } catch(err) {
-  //   console.log(err);
-  // }
-
-  console.log(formData)
-
   try {
-    const attempt = await fetch(`http://localhost:3038/posts/${postId}/update`, {
+    const attempt = await fetch(`https://word-oasis-api-production.up.railway.app/posts/${postId}/update`, {
       method:'PUT',
-      body: formData,
+      body: urlEncoded,
       headers: { 
         'Authorization': `Bearer ${localStorage.getItem("userToken")}`
        },
     })
     const response = await attempt.json();
     console.log(response)
+    
+    updateEditor.blocks.clear();
+    const IDinput = document.getElementById("id-input") as HTMLInputElement;
+    const titleInput = document.getElementById("update-title") as HTMLInputElement;
+    titleInput!.value = "";
+    IDinput!.value = "";
   } catch(err) {
     console.log(err)
   }
@@ -172,6 +158,7 @@ function createUpdateForm(foundPost, updateEditor) {
   
   const titleInput = document.createElement("input");
   titleInput.setAttribute("type", "text");
+  titleInput.setAttribute("id", "update-title");
   titleInput.value = foundPost.title;
 
   const statusLabel = document.createElement("label")
