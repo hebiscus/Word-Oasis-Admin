@@ -6,12 +6,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;500;600&family=Karla:wght@400;500;600;700;800&display=swap" rel="stylesheet"> 
+    <style>
+      .codex-editor__redactor {
+      padding-bottom: 0;
+      }
+    </style>
     <title>Word Oasis Admin</title>
   </head>
   <body>
     <div id="user-box"></div>
-    <h1>Make a post:</h1>
-    <form method="post" enctype="multipart/form-data">
+    <h2>Make a post:</h2>
+    <form method="post" enctype="multipart/form-data" id="make-form">
       <input type="text" placeholder="Title" id="title"/>
       <input type="file" id="blogpostImage" name="blogpostImage"/>
       <div id="editorjs"></div>
@@ -19,7 +24,7 @@
     </form>
     <h2>Update a post:</h2>
     <div id="update-box">
-      <form>
+      <form id="update-id">
         <input type="text" placeholder="ID of a post to update" id="id-input"/>
         <button type="submit" id="update-button">Find post data</button>
         <div id="updateEditor"></div>

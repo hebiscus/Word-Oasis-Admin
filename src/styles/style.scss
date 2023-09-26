@@ -2,7 +2,7 @@
 
 body {
     box-sizing: border-box;
-    margin: 0;
+    margin: 1em;
     padding: 0;
     font-family: variables.$main-font;
     background-color: variables.$background;
@@ -13,6 +13,75 @@ h1, h2, h3, h4, h5, h6 {
     font-family: variables.$headers-font;
 }
 
-.codex-editor {
-    max-width: 80%;
+.codex-editor__redactor {
+    padding-bottom: 0 !important;
+    border: 2px solid white;
+
+    &:hover {
+        cursor: text;
+    }
 }
+
+#login-form {
+    > * {margin-inline: 0.5em;}
+}
+
+#make-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+    margin-bottom: 2em;
+
+    > * {
+        border-radius: 11px;
+    }
+}
+
+#editorjs, #updateEditor {
+    
+    border-radius: 11px;
+}
+
+input {
+    &:hover {
+        cursor: text;;
+    }
+}
+
+input[type="text"], input[type="password"] {
+    font-size: 0.95rem;
+    padding: 0.5em;
+    border-radius: 11px;
+    border: none;
+    box-shadow: 0px 2px 1px 0px rgb(0 0 0 / 40%);
+}
+
+input[type="file"] {
+    border: none;
+    font-size: 0.95rem;
+    background-color: white;
+    padding: 0.3em;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+button {
+    font-size: 0.95rem;
+    padding: 0.3em;
+    padding-inline: 0.75em;
+    background-color: variables.$primary;
+    border-radius: 11px;
+    border: none;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+
+
+
+

@@ -27,12 +27,15 @@ function showUserBox() {
     
     if (!userToken) {
       const loginForm = document.createElement("form");
+      loginForm.setAttribute("id", "login-form");
       const nameInput = document.createElement("input");
       const passwordInput = document.createElement("input");
       const submitButton = document.createElement("button");
 
       nameInput.setAttribute("type", "text");
+      nameInput.setAttribute("placeholder", "Name:");
       passwordInput.setAttribute("type", "password");
+      passwordInput.setAttribute("placeholder", "Password:");
       submitButton.setAttribute("type", "submit");
       submitButton.addEventListener("click", (e: MouseEvent) => loginRequest(e, nameInput.value, passwordInput.value));
       submitButton.innerText = "Login";
@@ -96,6 +99,8 @@ const submitPostData = (async(e: MouseEvent) => {
     })
     const response = await attempt.json();
     console.log(response)
+    editor.blocks.clear();
+    document.getElementById("make-form").reset();
   } catch(err) {
     console.log(err)
   }
@@ -143,18 +148,21 @@ const updatePost = (async(e: MouseEvent, postId: string, title: string, updateEd
     console.log(response)
     
     updateEditor.blocks.clear();
-    const IDinput = document.getElementById("id-input") as HTMLInputElement;
-    const titleInput = document.getElementById("update-title") as HTMLInputElement;
-    titleInput!.value = "";
-    IDinput!.value = "";
+    // const IDinput = document.getElementById("id-input") as HTMLInputElement;
+    // const titleInput = document.getElementById("update-title") as HTMLInputElement;
+    // titleInput!.value = "";
+    // IDinput!.value = "";
+    document.getElementById("update-id").reset();
+    document.getElementById("update-form").reset();
   } catch(err) {
     console.log(err)
   }
 })
 
 function createUpdateForm(foundPost, updateEditor) {
-  const updateBox = document.getElementById("update-box")
+  const updateBox = document.getElementById("update-box");
   const updateForm = document.createElement("form");
+  updateForm.setAttribute("id", "update-form");
   
   const titleInput = document.createElement("input");
   titleInput.setAttribute("type", "text");
